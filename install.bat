@@ -1,0 +1,1 @@
+mvn clean install -D maven.skip.test=true
