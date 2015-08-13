@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+	<!-- 
+	weblogic多实例的情况下需要加一个weblogic实例名做区分
+	Linux下weblogic目录：
+	/app/mw/logs/wechat/${weblogic.Name}
+	 -->
+	<property name="charset" value="UTF-8" />
+	<property name="diskStore" value="logs/lazypeople/" />
+	<property name="maxFileSize" value="100MB" />
+	<property name="fileNamePattern_root" value="${diskStore}/%d{yyyy-MM-dd}.log" />
+	<property name="pattern_root" value="%date %level [%thread] %10logger [%file:%line] %msg%n" />
+    <!--Daily rolling file appender-->
+    <appender name="DailyFile" class="ch.qos.logback.core.rolling.RollingFileAppender">
+	    <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+	    	<fileNamePattern>${fileNamePattern_root}</fileNamePattern>
+	    	<MaxHistory>7</MaxHistory>
+	    </rollingPolicy>
+    	<encoder>
+   			<pattern>${pattern_root}</pattern>
+   			<charset>${charset}</charset> 
+    	</encoder>
+    </appender>
+     <!-- Output to Console -->
+    <appender name="Console" class="ch.qos.logback.core.ConsoleAppender">
+   		<encoder>
+			<pattern>${pattern_root}</pattern>
+    	</encoder>
+    </appender>
+
+	<!-- level:TRACE\DEBUG\INFO\WARN\ERROR\OFF -->
+	<!-- 
+	具体模块日志记录（可指定模块或者类路径）
+	additivity属性为false，表示此loger的打印信息不再向上级传递
+	 
+    <logger name="org.springframework.xxx" level="TRACE" additivity="false">
+        <appender-ref ref="xxxDailyFile" />
+        <appender-ref ref="xxxConsole" />
+    </logger>
+    -->
+    
+    <logger name="com.lazypeople" level="WARN" additivity="false">
+        <appender-ref ref="DailyFile" />
+        <appender-ref ref="Console" />
+    </logger>
+    
+    <!-- root日志记录配置 -->
+    <root level="ERROR">
+        <appender-ref ref="DailyFile"/>
+        <appender-ref ref="Console"/>
+    </root>
+</configuration>
